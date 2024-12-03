@@ -23,7 +23,9 @@ nothing.
 
 For example, consider the following section of corrupted memory:
 
+#+begin_example
 xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))
+#+end_example
 
 Only the four highlighted sections are real mul instructions. Adding up the
 result of each instruction produces 161 (2*4 + 5*5 + 11*8 + 8*5).
@@ -64,7 +66,9 @@ There are two new instructions you'll need to handle:
 
 For example:
 
+#+begin_example
 xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))
+#+end_example
 
 This corrupted memory is similar to the example from before, but this time the
 mul(5,5) and mul(11,8) instructions are disabled because there is a don't()
