@@ -1,0 +1,284 @@
+* Day 4: Ceres Search
+
+"Looks like the Chief's not here. Next!" One of The Historians pulls out a
+device and pushes the only button on it. After a brief flash, you recognize the
+interior of the Ceres monitoring station!
+
+As the search for the Chief continues, a small Elf who lives on the station tugs
+on your shirt; she'd like to know if you could help her with her word search
+(your puzzle input). She only has to find one word: XMAS.
+
+This word search allows words to be horizontal, vertical, diagonal, written
+backwards, or even overlapping other words. It's a little unusual, though, as
+you don't merely need to find one instance of XMAS - you need to find all of
+them. Here are a few ways XMAS might appear, where irrelevant characters have
+been replaced with .:
+
+
+#+begin_example
+..X...
+.SAMX.
+.A..A.
+XMAS.S
+.X....
+#+end_example
+
+The actual word search will be full of letters instead. For example:
+
+#+begin_example
+MMMSXXMASM
+MSAMXMSMSA
+AMXSXMAAMM
+MSAMASMSMX
+XMASAMXAMM
+XXAMMXXAMA
+SMSMSASXSS
+SAXAMASAAA
+MAMMMXMMMM
+MXMXAXMASX
+#+end_example
+
+In this word search, XMAS occurs a total of 18 times; here's the same word
+search again, but where letters not involved in any XMAS have been replaced with
+.:
+
+#+begin_example
+....XXMAS.
+.SAMXMS...
+...S..A...
+..A.A.MS.X
+XMASAMX.MM
+X.....XA.A
+S.S.S.S.SS
+.A.A.A.A.A
+..M.M.M.MM
+.X.X.XMASX
+#+end_example
+
+Take a look at the little Elf's word search. How many times does XMAS appear?
+
+#+name: task04_1
+#+header: :var filename="data.txt" sstr="XMAS"
+#+begin_src ruby
+  up =    [0, -1]
+  down =  [0, 1]
+  left =  [-1, 0]
+  right = [1, 0]
+  rd =    [1, 1]
+  ru =    [1, -1]
+  ld =    [-1, 1]
+  lu =    [-1, -1]
+
+
+  def sc( m, x, y, d, str )
+    i = 0
+    dx = d[0]
+    dy = d[1]
+    while i < str.length do
+      x1 = x + dx * i
+      y1 = y + dy * i
+      if y1 >= m.length or y1 < 0 or x1 >= m[y1].length or x1 < 0
+        return false
+      end
+      if m[y1][x1] != str[i]
+        return false
+      end
+      i += 1
+    end
+
+    return true
+  end
+
+  data = File.read(filename)
+
+  m = []
+  dbg = ""
+
+  data.each_line do |l|
+    m.append l.split //
+  end
+
+  cnt = 0
+
+  y = 0
+  while y < m.length
+    x = 0
+    #dbg += "\nLine #{y}: "
+    while x < m[y].length
+      cnt += 1 if sc( m, x, y, right, sstr)
+      cnt += 1 if sc( m, x, y, left, sstr)
+      cnt += 1 if sc( m, x, y, up, sstr)
+      cnt += 1 if sc( m, x, y, down, sstr)
+      cnt += 1 if sc( m, x, y, rd, sstr)
+      cnt += 1 if sc( m, x, y, ld, sstr)
+      cnt += 1 if sc( m, x, y, lu, sstr)
+      cnt += 1 if sc( m, x, y, ru, sstr)
+
+      x += 1
+    end
+    y += 1
+  end
+
+  dbg += "\n#{m.length} lines #{m[0].length} columns"
+  dbg += "\nFound #{sstr} #{cnt} times"
+  dbg
+#+end_src
+
+#+RESULTS: task03_2
+: 
+: 140 lines 141 rows
+: Found XMAS 2344 times
+
+Expected Result with test data: 18 times
+
+Result 2344
+
+** Part Two
+
+The Elf looks quizzically at you. Did you misunderstand the assignment?
+
+Looking for the instructions, you flip over the word search to find that this
+isn't actually an XMAS puzzle; it's an X-MAS puzzle in which you're supposed to
+find two MAS in the shape of an X. One way to achieve that is like this:
+
+#+begin_example
+M.S
+.A.
+M.S
+#+end_example
+
+Irrelevant characters have again been replaced with . in the above diagram.
+Within the X, each MAS can be written forwards or backwards.
+
+Here's the same example from before, but this time all of the X-MASes have been
+kept instead:
+
+#+begin_example
+.M.S......
+..A..MSMS.
+.M.S.MAA..
+..A.ASMSM.
+.M.S.M....
+..........
+S.S.S.S.S.
+.A.A.A.A..
+M.M.M.M.M.
+..........
+#+end_example
+
+In this example, an X-MAS appears 9 times.
+
+Flip the word search from the instructions back over to the word search side and
+try again. How many times does an X-MAS appear?
+
+*** Variants
+
+#+begin_example
+M.M
+.A.
+S.S
+#+end_example
+
+#+begin_example
+S.M
+.A.
+S.M
+#+end_example
+
+#+begin_example
+S.S
+.A.
+M.M
+#+end_example
+
+
+#+name: task04_2
+#+header: :var filename="data.txt"
+#+begin_src ruby
+  $up =    [0, -1]
+  $down =  [0, 1]
+  $left =  [-1, 0]
+  $right = [1, 0]
+  $rd =    [1, 1]
+  $ru =    [1, -1]
+  $ld =    [-1, 1]
+  $lu =    [-1, -1]
+
+
+  def sc( m, x, y, d, str )
+    i = 0
+    dx = d[0]
+    dy = d[1]
+    while i < str.length do
+      x1 = x + dx * i
+      y1 = y + dy * i
+      if y1 >= m.length or y1 < 0 or x1 >= m[y1].length or x1 < 0
+        return false
+      end
+      if m[y1][x1] != str[i]
+        return false
+      end
+      i += 1
+    end
+
+    return true
+  end
+
+  def scx( m, x, y, slu, sru, srd, sld )
+    if sc( m, x, y, $lu, slu) and sc( m, x, y, $ru, sru ) and sc( m, x, y, $rd, srd ) and sc( m, x, y, $ld, sld )
+      return true
+    end
+    return false
+  end
+
+  data = File.read(filename)
+
+  m = []
+
+  data.each_line do |l|
+    m.append l.split //
+  end
+
+  cnt = 0
+
+  y = 1
+  while y < m.length-1
+    x = 1
+    while x < m[y].length-1
+      # M.S
+      # .A.
+      # M.S
+      # lu, ru, rd, ld
+      cnt += 1 if scx( m, x, y, "AM", "AS", "AS", "AM" )
+
+      # M.M
+      # .A.
+      # S.S
+      cnt += 1 if scx( m, x, y, "AM", "AM", "AS", "AS" )
+
+      # S.M
+      # .A.
+      # S.M
+      cnt += 1 if scx( m, x, y, "AS", "AM", "AM", "AS" )
+
+      # S.S
+      # .A.
+      # M.M
+      cnt += 1 if scx( m, x, y, "AS", "AS", "AM", "AM" )
+
+      x += 1
+    end
+    y += 1
+  end
+
+  dbg =  "\n#{m.length} lines #{m[0].length} columns"
+  dbg += "\nFound X-MAS #{cnt} times"
+  dbg
+#+end_src
+
+#+RESULTS: task04_2
+: 
+: 140 lines 141 columns
+: X-MAS 1815 times
+
+Found X-MAS 1815 times
